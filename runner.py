@@ -1,4 +1,4 @@
 def main():
-    print('Start project')
+    print('Start project OOP')
 
 main()
