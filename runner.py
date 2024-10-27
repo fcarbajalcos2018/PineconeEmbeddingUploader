@@ -1,12 +1,12 @@
 
 def loadFiles(oaFile, pcFile, csv, pcServFile):
-    oaAPI = loadOAAPI(oaFile)
-    pcAPI = ''
+    oaAPI = loadAPIFile(oaFile)
+    pcAPI = loadAPIFile(pcFile)
     csvData = ''
-    pcServer = ''
+    pcServer = loadAPIFile(pcServFile)
     return oaAPI, pcAPI, csvData, pcServer
 
-def loadOAAPI(fileName):
+def loadAPIFile(fileName):
     api = ''
     try:
         with open(fileName, 'r') as file:
@@ -24,6 +24,6 @@ def main():
     csv = 'inputFiles/testVectors-csv-2024-10-14.txt'
     pcServFile = 'inputFiles/pcServer.txt'
     oaAPI, pcAPI, csvData, pcServ = loadFiles(oaFile, pcFile, csv, pcServFile)
-    print('OpenAI API:', oaAPI)
+    print('OpenAI API:', oaAPI, pcAPI, pcServ)
 
 main()
