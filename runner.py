@@ -83,7 +83,6 @@ def ps_av_generateEmbedding(oa: openai.OpenAI, content: str, embModel: str):
     return None
 
 def ps_uploadVectors(index: pinecone.Index, vectors: list, batchSize: int):
-
     vectorsLength = len(vectors)
     batch = []
     for i in range(vectorsLength):
@@ -105,6 +104,10 @@ def main():
     csv = 'inputFiles/testVectors-csv-2024-10-14.csv'
     pcServFile = 'inputFiles/pcServer.txt'
     oaAPI, pcAPI, csvData, pcServ = loadFiles(oaFile, pcFile, csv, pcServFile)
+    indexName = 'indextestsf'
+    embModel = 'text-embedding-3-large'
+    batchSize = 2
+    pineconeService(oaAPI=oaAPI, pcAPI=pcAPI, csvData=csv, pcServ=pcServ, indexName=indexName, embModel=embModel, batchSize=batchSize)
     print('OpenAI API:', oaAPI)
     print('Pinecone API:', pcAPI)
     print('CSV:')
