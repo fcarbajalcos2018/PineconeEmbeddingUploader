@@ -40,6 +40,10 @@ def pineconeService(oaAPI: str, pcAPI: str, csvData: list, pcServ: str, indexNam
     index = ps_defineIndex(pc=pc, indexName=indexName, pcServ=pcServ)
     vectors = ps_addVectors(oa=oa, csvData=csvData, embModel=embModel)
     isUploaded = ps_uploadVectors(index=index, vectors=vectors, batchSize=batchSize)
+    if isUploaded:
+        print('Upload successful!')
+    else:
+        print('Upload unsuccessful :(')
 
 
 def ps_defineIndex(pc: pinecone.Pinecone, indexName: str, pcServ: str):
@@ -61,7 +65,7 @@ def ps_addVectors(oa: openai.OpenAI, csvData: list, embModel: str):
     for entry in csvData:
         try:
             vector = {
-                'id': str(entry['id']),
+                'id': entry['id'],
                 'values': ps_av_generateEmbedding(oa=oa, content=entry['content'], embModel=embModel),
                 'metadata': {
                     'title': entry['title']
