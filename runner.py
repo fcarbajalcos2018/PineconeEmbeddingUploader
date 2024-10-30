@@ -69,7 +69,7 @@ def ps_addVectors(oa: openai.OpenAI, csvData: list, embModel: str):
             vectors.append(vector)
         except AttributeError as e:
             print('Could not complete vector assignment:', e)
-            break
+            return []
     return vectors
 
 def ps_av_generateEmbedding(oa: openai.OpenAI, content: str, embModel: str):
@@ -93,8 +93,9 @@ def ps_uploadVectors(index: pinecone.Index, vectors: list, batchSize: int):
             index.upsert(batch)
         except TypeError as e:
             print('Unable to upload due to the following:', e)
-            break
-        batch.clear()    
+            return False
+        batch.clear()
+        return True    
 
 def main():
     print('Start project straightforward')
