@@ -39,7 +39,8 @@ def pineconeService(oaAPI: str, pcAPI: str, csvData: list, pcServ: str, indexNam
     pc = pinecone.Pinecone(api_key=pcAPI)
     index = ps_defineIndex(pc=pc, indexName=indexName, pcServ=pcServ)
     vectors = ps_addVectors(oa=oa, csvData=csvData, embModel=embModel)
-    ps_uploadVectors(index=index, vectors=vectors, batchSize=batchSize)
+    isUploaded = ps_uploadVectors(index=index, vectors=vectors, batchSize=batchSize)
+
 
 def ps_defineIndex(pc: pinecone.Pinecone, indexName: str, pcServ: str):
     indexes = [index['name'] for index in pc.list_indexes()]
@@ -85,6 +86,9 @@ def ps_av_generateEmbedding(oa: openai.OpenAI, content: str, embModel: str):
 def ps_uploadVectors(index: pinecone.Index, vectors: list, batchSize: int):
     vectorsLength = len(vectors)
     batch = []
+    couldUpload = True
+    if vectorsLength == 0:
+        return False
     for i in range(vectorsLength):
         batch.append(vectors[i])
         if i + 1 % batchSize != 0 and i != vectorsLength - 1:
@@ -93,9 +97,9 @@ def ps_uploadVectors(index: pinecone.Index, vectors: list, batchSize: int):
             index.upsert(batch)
         except TypeError as e:
             print('Unable to upload due to the following:', e)
-            return False
+            couldUpload = False
         batch.clear()
-        return True    
+    return couldUpload    
 
 def main():
     print('Start project straightforward')
