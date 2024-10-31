@@ -65,6 +65,9 @@ def ps_addVectors(oa: openai.OpenAI, csvData: list, embModel: str):
     countErrors = 0
     for entry in csvData:
         #print('a', entry)
+        if countErrors == 3:
+            print('Error limit reached. Breaking operation.')
+            break
         try:
             vector = {
                 'id': str(entry['id']),
@@ -84,9 +87,6 @@ def ps_addVectors(oa: openai.OpenAI, csvData: list, embModel: str):
             print('Could not complete vector assignment:', e)
             countErrors += 1
             print('Error count:', countErrors)
-        if countErrors == 3:
-            print('Error limit reached. Breaking operation.')
-            break
             
     return vectors
 
