@@ -62,10 +62,12 @@ def ps_defineIndex(pc: pinecone.Pinecone, indexName: str, pcServ: str):
 
 def ps_addVectors(oa: openai.OpenAI, csvData: list, embModel: str):
     vectors = []
+    #print(csvData)
     for entry in csvData:
+        print('a', entry)
         try:
             vector = {
-                'id': entry['id'],
+                'id': str(entry['id']),
                 'values': ps_av_generateEmbedding(oa=oa, content=entry['content'], embModel=embModel),
                 'metadata': {
                     'title': entry['title']
@@ -80,7 +82,9 @@ def ps_addVectors(oa: openai.OpenAI, csvData: list, embModel: str):
 def ps_av_generateEmbedding(oa: openai.OpenAI, content: str, embModel: str):
     try:
         res = oa.embeddings.create(input=content, model=embModel)
-        embedding = res['data'][0]['embedding']
+        print('ad')
+        print('res', res.data[0].embedding)
+        embedding = res.data[0].embedding
         print(f"Generated embedding of length {len(embedding)}")
         return embedding
     except Exception as e:
@@ -91,12 +95,17 @@ def ps_uploadVectors(index: pinecone.Index, vectors: list, batchSize: int):
     vectorsLength = len(vectors)
     batch = []
     couldUpload = True
+    print('begin upload')
     if vectorsLength == 0:
         return False
+    print('start..')
     for i in range(vectorsLength):
         batch.append(vectors[i])
-        if i + 1 % batchSize != 0 and i != vectorsLength - 1:
+        print('append', i)
+        print(i + 1, '%', batchSize, (i + 1) % batchSize, (i + 1) % batchSize == 0)
+        if (i + 1) % batchSize != 0 and i != vectorsLength - 1:
             continue
+        print('batch', [vector['id'] for vector in batch])
         try:
             index.upsert(batch)
         except TypeError as e:
@@ -116,7 +125,7 @@ def main():
     indexName = 'indextestsf'
     embModel = 'text-embedding-3-large'
     batchSize = 2
-    pineconeService(oaAPI=oaAPI, pcAPI=pcAPI, csvData=csv, pcServ=pcServ, indexName=indexName, embModel=embModel, batchSize=batchSize)
+    pineconeService(oaAPI=oaAPI, pcAPI=pcAPI, csvData=csvData, pcServ=pcServ, indexName=indexName, embModel=embModel, batchSize=batchSize)
     print('OpenAI API:', oaAPI)
     print('Pinecone API:', pcAPI)
     print('CSV:')
