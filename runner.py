@@ -2,12 +2,11 @@ import openai
 import pandas as pd
 import pinecone
 
-def loadFiles(oaFile: str, pcFile: str, csv: pd.DataFrame, pcServFile):
+def loadFiles(oaFile: str, pcFile: str, csv: pd.DataFrame):
     oaAPI = lf_loadAPIFile(oaFile)
     pcAPI = lf_loadAPIFile(pcFile)
     csvData = lf_loadCSV(csv)
-    pcServer = lf_loadAPIFile(pcServFile)
-    return oaAPI, pcAPI, csvData, pcServer
+    return oaAPI, pcAPI, csvData
 
 def lf_loadAPIFile(fileName: str):
     api = ''
@@ -34,10 +33,10 @@ def lf_loadCSV(fileName: str):
         parsedData.append(rowData)
     return parsedData
 
-def pineconeService(oaAPI: str, pcAPI: str, csvData: list, pcServ: str, indexName: str, embModel: str, batchSize: int):
+def pineconeService(oaAPI: str, pcAPI: str, csvData: list, indexName: str, embModel: str, batchSize: int):
     oa = openai.OpenAI(api_key=oaAPI)
     pc = pinecone.Pinecone(api_key=pcAPI)
-    index = ps_defineIndex(pc=pc, indexName=indexName, pcServ=pcServ)
+    index = ps_defineIndex(pc=pc, indexName=indexName)
     vectors = ps_addVectors(oa=oa, csvData=csvData, embModel=embModel)
     isUploaded = ps_uploadVectors(index=index, vectors=vectors, batchSize=batchSize)
     if isUploaded:
@@ -46,7 +45,7 @@ def pineconeService(oaAPI: str, pcAPI: str, csvData: list, pcServ: str, indexNam
         print('Upload unsuccessful :(')
 
 
-def ps_defineIndex(pc: pinecone.Pinecone, indexName: str, pcServ: str):
+def ps_defineIndex(pc: pinecone.Pinecone, indexName: str):
     indexes = [index['name'] for index in pc.list_indexes()]
     if len(indexes) == 0 or indexName not in indexes:
         pc.create_index(
@@ -58,7 +57,7 @@ def ps_defineIndex(pc: pinecone.Pinecone, indexName: str, pcServ: str):
                 region='us-east-1'
             )
         )
-    return pc.Index(name=indexName, host=pcServ)
+    return pc.Index(name=indexName)
 
 def ps_addVectors(oa: openai.OpenAI, csvData: list, embModel: str):
     vectors = []
@@ -120,16 +119,14 @@ def main():
     oaFile = 'inputFiles/APIKey.txt'
     pcFile = 'inputFiles/pcAPIKey.txt'
     csv = 'inputFiles/testVectors-csv-2024-10-14.csv'
-    pcServFile = 'inputFiles/pcServer.txt'
-    oaAPI, pcAPI, csvData, pcServ = loadFiles(oaFile, pcFile, csv, pcServFile)
+    oaAPI, pcAPI, csvData = loadFiles(oaFile, pcFile, csv)
     indexName = 'indextestsf'
     embModel = 'text-embedding-3-large'
     batchSize = 2
-    pineconeService(oaAPI=oaAPI, pcAPI=pcAPI, csvData=csvData, pcServ=pcServ, indexName=indexName, embModel=embModel, batchSize=batchSize)
+    pineconeService(oaAPI=oaAPI, pcAPI=pcAPI, csvData=csvData, indexName=indexName, embModel=embModel, batchSize=batchSize)
     print('OpenAI API:', oaAPI)
     print('Pinecone API:', pcAPI)
     print('CSV:')
     print([row['id'] for row in csvData])
-    print('Pinecone Server:', pcServ)
 
 main()
