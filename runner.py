@@ -1,6 +1,7 @@
 import openai
 import pandas as pd
 import pinecone
+import time
 
 def loadFiles(oaFile: str, pcFile: str, csv: pd.DataFrame):
     oaAPI = lf_loadAPIFile(oaFile)
@@ -62,13 +63,15 @@ def ps_defineIndex(pc: pinecone.Pinecone, indexName: str):
 def ps_addVectors(oa: openai.OpenAI, csvData: list, embModel: str):
     vectors = []
     #print(csvData)
-    countErrors = 0
+    countErrorsInRetry = 0
+    countErrorsInFail = 0
+
     for entry in csvData:
         #print('a', entry)
-        if countErrors == 3:
+        if countErrorsInFail == 3:
             print('Error limit reached. Breaking operation.')
             break
-        try:
+        while countErrorsInRetry < 3:
             vector = {
                 'id': str(entry['id']),
                 'values': ps_av_generateEmbedding(oa=oa, content=entry['content'], embModel=embModel),
@@ -77,16 +80,19 @@ def ps_addVectors(oa: openai.OpenAI, csvData: list, embModel: str):
                 }
             }
             if len(vector['values']) == 0:
-                countErrors += 1
-                print('Due to error, embedding will not be added as vector.')
-                print('Error count:', countErrors)
+                countErrorsInRetry += 1
+                sleep = 60
+                print(f'Reattempting vector creation up to 3 times with a wait of {sleep} seconds.')
+                print('Error count:', countErrorsInRetry)
+                time.sleep(sleep)
                 continue
+            print('Vector creation successful. Proceeding to next...')
             vectors.append(vector)
-            countErrors = 0
-        except AttributeError as e:
-            print('Could not complete vector assignment:', e)
-            countErrors += 1
-            print('Error count:', countErrors)
+            countErrorsInRetry = 0
+            countErrorsInFail = 0
+        else:
+            countErrorsInFail += 1
+            print('Failed attempts count:', countErrorsInFail)
             
     return vectors
 
@@ -130,9 +136,9 @@ def main():
     pcFile = 'inputFiles/pcAPIKey2.txt'
     csv = 'inputFiles/vectors-csv-2024-10-14.csv'
     oaAPI, pcAPI, csvData = loadFiles(oaFile, pcFile, csv)
-    indexName = 'indextestsf2'
+    indexName = 'indextestsf3'
     embModel = 'text-embedding-3-large'
-    batchSize = 2
+    batchSize = 5
     pineconeService(oaAPI=oaAPI, pcAPI=pcAPI, csvData=csvData, indexName=indexName, embModel=embModel, batchSize=batchSize)
     print('OpenAI API:', oaAPI)
     print('Pinecone API:', pcAPI)
