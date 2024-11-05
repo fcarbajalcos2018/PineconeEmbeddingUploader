@@ -1,3 +1,6 @@
+from models.inputFiles import InputFiles
+from models.pineconeService import PineconeService
+
 def userWelcome():
     print('Welcome to the Pinecone Embedding and Vector Uploader!')
     print('Press 1 to start a new upload')
@@ -5,18 +8,37 @@ def userWelcome():
     res = input('Your response: ')
     if res == 1:
         print('You selected (1) to start a new upload job')
-        userInputNew()
+        _userInputNew()
     elif res == 2:
         print('You selected (2) to load an existing save file and continue upload job')
-        userInputLoad()
+        _userInputLoad()
     else:
         print('Your selection was INVALID. Please reattempt.')
         userWelcome()
 
-def userInputNew():
-    raise NotImplementedError()
+def _userInputNew():
+    inFile = InputFiles()
+    print('Please enter the name of the file containing the Open AI API Key')
+    oaFileName = input('OpenAI API Key File: ')
+    inFile.set_oaAPIfilename(oaFileName)
+    print('Please enter the name of the file containing the Pinecone API Key')
+    pcFileName = input('Pinecone API Key File: ')
+    inFile.set_pcAPIfilename(pcFileName)
+    print('Please enter the name of the CSV file containing the Embeddings')
+    csvFileName = input('CSV File:')
+    inFile.set_csvFilename(csvFileName)
+    print('Proceeding to access contents of files...')
+    oaAPI = inFile.get_oaAPI()
+    pcAPI = inFile.get_pcAPI()
+    csv = inFile.get_csv()
+    if (len(oaAPI) == 0 or len(pcAPI) == 0 or len(csv) == 0):
+        print('Unable to access file contents.')
+        print('The names you entered do not match with existing files in this directory. Please reattempt.')
+        _userInputNew()
+        return
+    # Start Pinecone Service
 
-def userInputLoad():
+def _userInputLoad():
     raise NotImplementedError()
 
 def main():
