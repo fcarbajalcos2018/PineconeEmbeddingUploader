@@ -1,5 +1,6 @@
 from openai import OpenAI
 from pinecone import pinecone, Pinecone
+import time
 
 class PineconeService:
 
@@ -22,3 +23,38 @@ class PineconeService:
                 )
             )
         self.index = self.pc.Index(name=indexName)
+
+    def addVectors(self, csvData: list, embModel: str):
+        vectors = []
+        #print(csvData)
+        countErrorsInFail = 0
+
+        for entry in csvData:
+            #print('a', entry)
+            if countErrorsInFail == 3:
+                print('Error limit reached. Breaking operation.')
+                break
+            countErrorsInRetry = 0
+            while countErrorsInRetry < 3:
+                vector = {
+                    'id': str(entry['id']),
+                    'values': _generateEmbedding(content=entry['content'], embModel=embModel),
+                    'metadata': {
+                        'title': entry['title']
+                    }
+                }
+                if len(vector['values']) > 0:
+                    vectors.append(vector)
+                    countErrorsInFail = 0
+                    print(f'Vector {vector["id"]} successfully created!')
+                    break
+                countErrorsInRetry += 1
+                sleep = 60
+                print(f'Vector {vector["id"]} creation FAILED. Reattempting creation for up to 3 times in a span of {sleep} seconds.')
+                print('No. of attempts:', countErrorsInRetry)
+                time.sleep(sleep)
+            else:
+                countErrorsInFail += 1
+                print('Maximum no. of retries reached. Proceeding to the next embedding with a failure count of', countErrorsInFail, '.')
+                
+        return vectors
