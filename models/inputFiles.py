@@ -35,7 +35,7 @@ class InputFiles():
             return ''
         return self._loadAPI(self.pcAPI_filename)
     
-    def _loadAPI(self, filename):
+    def _loadAPI(self, filename: str):
         api = ''
         fullDirPath = f'inputFiles/{filename}.txt'
         try:
