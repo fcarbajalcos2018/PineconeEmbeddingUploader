@@ -7,13 +7,13 @@ class InputFiles():
         self.pcAPI_filename = ''
         self.csv_filename = ''
     
-    def set_oaAPIfilename(self, filename):
+    def set_oaAPIfilename(self, filename: str):
         self.oaAPI_filename = filename
     
-    def set_pcAPIfilename(self, filename):
+    def set_pcAPIfilename(self, filename: str):
         self.pcAPI_filename = filename
 
-    def set_csvFilename(self, filename):
+    def set_csvFilename(self, filename: str):
         self.csv_filename = filename
     
     def _isOaAPIfilenameSet(self):
@@ -37,8 +37,9 @@ class InputFiles():
     
     def _loadAPI(self, filename):
         api = ''
+        fullDirPath = f'inputFiles/{filename}.txt'
         try:
-            with open(filename, 'r') as file:
+            with open(fullDirPath, 'r') as file:
                 api = file.read()
         except FileNotFoundError:
             print('File not found')
@@ -47,7 +48,8 @@ class InputFiles():
     def get_csv(self):
         if self._isCSVfilenameSet():
             return None
-        data = pd.read_csv(self.csv_filename)
+        fullDirPath = f'inputFiles/{self.csv_filename}.csv'
+        data = pd.read_csv(fullDirPath)
         parsedData = []
         for i, row in data.iterrows():
             rowData = {
