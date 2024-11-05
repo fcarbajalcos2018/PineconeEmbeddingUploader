@@ -13,6 +13,12 @@ def userWelcome():
         print('Your selection was INVALID. Please reattempt.')
         userWelcome()
 
+def userInputNew():
+    raise NotImplementedError()
+
+def userInputLoad():
+    raise NotImplementedError()
+
 def main():
     print('Start project OOP')
 
