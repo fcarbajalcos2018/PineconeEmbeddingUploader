@@ -39,7 +39,7 @@ class InputFiles():
         api = ''
         fullDirPath = f'inputFiles/{filename}.txt'
         try:
-            with open(fullDirPath, 'r') as file:
+            with open(file=fullDirPath, mode='r') as file:
                 api = file.read()
         except FileNotFoundError:
             print('File not found')
