@@ -62,8 +62,25 @@ def _userInputLoad():
         bundle = _userInputLoad()
     return bundle
 
-def _userDefineIndex(pinecone: PineconeService, embeddings: Any | dict | list | None):
-    raise NotImplementedError()
+def _userDefineIndexAndEmbeddings(pinecone: PineconeService, embeddings: Any | dict | list | None):
+    indexName = None
+    resEmb = None
+    print('Contents: ', embeddings)
+    if isinstance(embeddings, list):
+        print('Please enter a name for an existing or new Index')
+        indexName = input('Index Name: ')
+        pinecone.defineIndex(indexName)
+        resEmb = embeddings
+    elif isinstance(embeddings, dict):
+        print('Extracting name from save file')
+        try:
+            indexName = embeddings['indexName']
+            resEmb = embeddings['embeddings']
+        except AttributeError as ae:
+            print('INVALID JSON format:', ae)
+    else:
+        raise Exception('The file contents could not be read')
+    return indexName, resEmb
 
 def main():
     print('Start project OOP')
