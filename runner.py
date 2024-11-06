@@ -5,7 +5,7 @@ def userWelcome():
     print('Welcome to the Pinecone Embedding and Vector Uploader!')
     print('Press 1 to start a new upload')
     print('Press 2 to continue an upload from saved file')
-    res = input('Your response: ')
+    res = int(input('Your response: '))
     if res == 1:
         print('You selected (1) to start a new upload job')
         _userInputNew()
@@ -31,7 +31,7 @@ def _userInputNew():
     oaAPI = inFile.get_oaAPI()
     pcAPI = inFile.get_pcAPI()
     csv = inFile.get_csv()
-    if (len(oaAPI) == 0 or len(pcAPI) == 0 or len(csv) == 0):
+    if len(oaAPI) == 0 or len(pcAPI) == 0 or len(csv) == 0:
         print('Unable to access file contents.')
         print('The names you entered do not match with existing files in this directory. Please reattempt.')
         _userInputNew()
@@ -39,7 +39,17 @@ def _userInputNew():
     # Start Pinecone Service
 
 def _userInputLoad():
-    raise NotImplementedError()
+    inFile = InputFiles()
+    print('Please enter the name of the JSON file containing the SAVED embeddings')
+    embFileName = input('JSON File: ')
+    inFile.set_embFilename(embFileName)
+    print('Loading file...')
+    emb = inFile.get_emb()
+    if len(emb) == 0:
+        print('Unable to access file contents.')
+        print('The names you entered do not match with existing files in this directory. Please reattempt.')
+        emb = _userInputLoad()
+    return emb
 
 def main():
     print('Start project OOP')
