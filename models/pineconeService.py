@@ -59,7 +59,7 @@ class PineconeService:
                 
         return vectors
     
-    def _generateEmbedding(self, content, embModel):
+    def _generateEmbedding(self, content: str, embModel: str):
         try:
             res = self.oa.embeddings.create(input=content, model=embModel)
             embedding = res.data[0].embedding
@@ -68,3 +68,28 @@ class PineconeService:
         except Exception as e:
             print(f"Error generating embedding: {e}")
         return []
+    
+    def uploadVectors(self, vectors: list, batchSize: int):
+        vecLen = len(vectors)
+        if self.index == None or vecLen == 0:
+            print('ERROR: Could not proceed with vector upload. Either the index has not been initialized or the vectors were missing.')
+            return False
+        batch = []
+        couldUpload = True
+        print('begin upload')
+        print('start..')
+        for i in range(vecLen):
+            batch.append(vectors[i])
+            print('append', i)
+            print(i + 1, '%', batchSize, (i + 1) % batchSize, (i + 1) % batchSize == 0)
+            if (i + 1) % batchSize != 0 and i != vecLen - 1:
+                continue
+            print('batch', [vector['id'] for vector in batch])
+            try:
+                self.index.upsert(batch)
+            except TypeError as e:
+                print('Unable to upload due to the following:', e)
+                couldUpload = False
+            batch.clear()
+        return couldUpload
+        
