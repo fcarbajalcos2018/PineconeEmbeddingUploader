@@ -15,21 +15,24 @@ def userWelcome():
     else:
         print('Your selection was INVALID. Please reattempt.')
         userWelcome()
+        return
 
-def _userInputNew():
-    inFile = InputFiles()
+def insertOaPc(inFile: InputFiles):
     print('Please enter the name of the file containing the Open AI API Key')
     oaFileName = input('OpenAI API Key File: ')
     inFile.set_oaAPIfilename(oaFileName)
     print('Please enter the name of the file containing the Pinecone API Key')
     pcFileName = input('Pinecone API Key File: ')
     inFile.set_pcAPIfilename(pcFileName)
+    return inFile.get_oaAPI(), inFile.get_pcAPI()
+
+def _userInputNew():
+    inFile = InputFiles()
+    oaAPI, pcAPI = insertOaPc(inFile=inFile)
     print('Please enter the name of the CSV file containing the Embeddings')
     csvFileName = input('CSV File:')
     inFile.set_csvFilename(csvFileName)
     print('Proceeding to access contents of files...')
-    oaAPI = inFile.get_oaAPI()
-    pcAPI = inFile.get_pcAPI()
     csv = inFile.get_csv()
     bundle = oaAPI, pcAPI, csv
     if len(oaAPI) == 0 or len(pcAPI) == 0 or len(csv) == 0:
@@ -40,16 +43,18 @@ def _userInputNew():
 
 def _userInputLoad():
     inFile = InputFiles()
+    oaAPI, pcAPI = insertOaPc(inFile=inFile)
     print('Please enter the name of the JSON file containing the SAVED embeddings')
     embFileName = input('JSON File: ')
     inFile.set_embFilename(embFileName)
     print('Loading file...')
     emb = inFile.get_emb()
-    if len(emb) == 0:
+    bundle = oaAPI, pcAPI, emb
+    if len(oaAPI) == 0 or len(pcAPI) == 0 or len(emb) == 0:
         print('Unable to access file contents.')
         print('The names you entered do not match with existing files in this directory. Please reattempt.')
-        emb = _userInputLoad()
-    return emb
+        bundle = _userInputLoad()
+    return bundle
 
 def main():
     print('Start project OOP')
