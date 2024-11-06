@@ -71,11 +71,14 @@ class InputFiles():
             parsedData.append(rowData)
         return parsedData
     
-    def get_emb(self):
+    def get_emb(self) -> dict:
         if self._isEmbFilenameSet():
             return None
         fullDirPath = f'inputFiles/{self.emb_filename}.json'
         content = {}
         with open(file=fullDirPath, mode='r') as file:
-            content = json.load(file)
+            try:
+                content = json.load(file)
+            except TypeError as te:
+                print('Unable to retrieve contents:', te)
         return content
