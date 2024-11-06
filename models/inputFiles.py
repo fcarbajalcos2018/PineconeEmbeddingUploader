@@ -1,4 +1,5 @@
 import pandas as pd
+import json
 
 class InputFiles():
 
@@ -69,3 +70,12 @@ class InputFiles():
             }
             parsedData.append(rowData)
         return parsedData
+    
+    def get_emb(self):
+        if self._isEmbFilenameSet():
+            return None
+        fullDirPath = f'inputFiles/{self.emb_filename}.json'
+        content = {}
+        with open(file=fullDirPath, mode='r') as file:
+            content = json.load(file)
+        return content
