@@ -1,6 +1,8 @@
 from openai import OpenAI
 from pinecone import pinecone, Pinecone
 import time
+import random
+import json
 
 class PineconeService:
 
@@ -96,3 +98,18 @@ class PineconeService:
             batch.clear()
         return couldUpload
         
+    def saveFailedEmbeddings(self):
+        if len(self.failedEmbeddings) == 0:
+            print('No failed embeddings. Rejecting operation.')
+            return
+        fullDir = f'inputFiles/{self._generateRandomFileName()}.json'
+        with open(file=fullDir, mode='w') as file:
+            json.dump(self.failedEmbeddings, file)
+        
+    def _generateRandomFileName():
+        chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
+        filename = ''
+        for i in range(8):
+            char_i = random.randrange(len(chars))
+            filename += chars[char_i]
+        return filename
