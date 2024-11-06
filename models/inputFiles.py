@@ -6,6 +6,7 @@ class InputFiles():
         self.oaAPI_filename = ''
         self.pcAPI_filename = ''
         self.csv_filename = ''
+        self.emb_filename = ''
     
     def set_oaAPIfilename(self, filename: str):
         self.oaAPI_filename = filename
@@ -16,6 +17,9 @@ class InputFiles():
     def set_csvFilename(self, filename: str):
         self.csv_filename = filename
     
+    def set_embFilename(self, filename: str):
+        self.emb_filename = filename
+    
     def _isOaAPIfilenameSet(self):
         return len(self.oaAPI_filename) > 0
     
@@ -24,6 +28,9 @@ class InputFiles():
     
     def _isCSVfilenameSet(self):
         return len(self.csv_filename) > 0
+    
+    def _isEmbFilenameSet(self):
+        return len(self.emb_filename) > 0
     
     def get_oaAPI(self):
         if self._isOaAPIfilenameSet():
