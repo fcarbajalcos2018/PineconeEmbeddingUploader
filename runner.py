@@ -1,3 +1,4 @@
+from typing import Any
 from models.inputFiles import InputFiles
 from models.pineconeService import PineconeService
 
@@ -6,18 +7,23 @@ def userWelcome():
     print('Press 1 to start a new upload')
     print('Press 2 to continue an upload from saved file')
     res = int(input('Your response: '))
+    bundle = None
     if res == 1:
         print('You selected (1) to start a new upload job')
-        _userInputNew()
+        bundle = _userInputNew()
     elif res == 2:
         print('You selected (2) to load an existing save file and continue upload job')
-        _userInputLoad()
+        bundle = _userInputLoad()
     else:
         print('Your selection was INVALID. Please reattempt.')
         userWelcome()
         return
+    oaAPI, pcAPI, embeddingSet = bundle
+    print('Initializing Pinecone service....')
+    pc = PineconeService(oaAPI=oaAPI, pcAPI=pcAPI)
+    _userDefineIndex(pinecone=pc, embeddings=embeddingSet)
 
-def insertOaPc(inFile: InputFiles):
+def __insertOaPc(inFile: InputFiles):
     print('Please enter the name of the file containing the Open AI API Key')
     oaFileName = input('OpenAI API Key File: ')
     inFile.set_oaAPIfilename(oaFileName)
@@ -28,7 +34,7 @@ def insertOaPc(inFile: InputFiles):
 
 def _userInputNew():
     inFile = InputFiles()
-    oaAPI, pcAPI = insertOaPc(inFile=inFile)
+    oaAPI, pcAPI = __insertOaPc(inFile=inFile)
     print('Please enter the name of the CSV file containing the Embeddings')
     csvFileName = input('CSV File:')
     inFile.set_csvFilename(csvFileName)
@@ -43,7 +49,7 @@ def _userInputNew():
 
 def _userInputLoad():
     inFile = InputFiles()
-    oaAPI, pcAPI = insertOaPc(inFile=inFile)
+    oaAPI, pcAPI = __insertOaPc(inFile=inFile)
     print('Please enter the name of the JSON file containing the SAVED embeddings')
     embFileName = input('JSON File: ')
     inFile.set_embFilename(embFileName)
@@ -55,6 +61,9 @@ def _userInputLoad():
         print('The names you entered do not match with existing files in this directory. Please reattempt.')
         bundle = _userInputLoad()
     return bundle
+
+def _userDefineIndex(pinecone: PineconeService, embeddings: Any | dict | list | None):
+    raise NotImplementedError()
 
 def main():
     print('Start project OOP')
