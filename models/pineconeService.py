@@ -9,6 +9,7 @@ class PineconeService:
         self.pc = Pinecone(api_key=pcAPI)
         self.index = None
         self.vectors = None
+        self.failedEmbeddings = []
 
     def defineIndex(self, indexName: str):
         indexes = [index['name'] for index in self.pc.list_indexes()]
@@ -56,6 +57,8 @@ class PineconeService:
             else:
                 countErrorsInFail += 1
                 print('Maximum no. of retries reached. Proceeding to the next embedding with a failure count of', countErrorsInFail, '.')
+                self.failedEmbeddings.append(entry)
+                print(f'Failed embedding data {vector["id"]} added to separate list for local save.')
                 
         return vectors
     
