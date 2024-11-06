@@ -31,12 +31,12 @@ def _userInputNew():
     oaAPI = inFile.get_oaAPI()
     pcAPI = inFile.get_pcAPI()
     csv = inFile.get_csv()
+    bundle = oaAPI, pcAPI, csv
     if len(oaAPI) == 0 or len(pcAPI) == 0 or len(csv) == 0:
         print('Unable to access file contents.')
         print('The names you entered do not match with existing files in this directory. Please reattempt.')
-        _userInputNew()
-        return
-    # Start Pinecone Service
+        bundle = _userInputNew()
+    return bundle
 
 def _userInputLoad():
     inFile = InputFiles()
