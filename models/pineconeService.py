@@ -38,7 +38,7 @@ class PineconeService:
             while countErrorsInRetry < 3:
                 vector = {
                     'id': str(entry['id']),
-                    'values': _generateEmbedding(content=entry['content'], embModel=embModel),
+                    'values': self._generateEmbedding(content=entry['content'], embModel=embModel),
                     'metadata': {
                         'title': entry['title']
                     }
@@ -58,3 +58,13 @@ class PineconeService:
                 print('Maximum no. of retries reached. Proceeding to the next embedding with a failure count of', countErrorsInFail, '.')
                 
         return vectors
+    
+    def _generateEmbedding(self, content, embModel):
+        try:
+            res = self.oa.embeddings.create(input=content, model=embModel)
+            embedding = res.data[0].embedding
+            print(f"Generated embedding of length {len(embedding)}")
+            return embedding
+        except Exception as e:
+            print(f"Error generating embedding: {e}")
+        return []
