@@ -21,7 +21,7 @@ def userWelcome():
     oaAPI, pcAPI, embeddingSet = bundle
     print('Initializing Pinecone service....')
     pc = PineconeService(oaAPI=oaAPI, pcAPI=pcAPI)
-    _userDefineIndex(pinecone=pc, embeddings=embeddingSet)
+    embeddings = _userDefineIndexAndEmbeddings(pinecone=pc, embeddings=embeddingSet)
 
 def __insertOaPc(inFile: InputFiles):
     print('Please enter the name of the file containing the Open AI API Key')
@@ -76,11 +76,14 @@ def _userDefineIndexAndEmbeddings(pinecone: PineconeService, embeddings: Any | d
         try:
             indexName = embeddings['indexName']
             resEmb = embeddings['embeddings']
+            pinecone.defineIndex(indexName)
         except AttributeError as ae:
             print('INVALID JSON format:', ae)
+        except TypeError as te:
+            print('Embedding list is NOT a list:', te)
     else:
         raise Exception('The file contents could not be read')
-    return indexName, resEmb
+    return resEmb
 
 def main():
     print('Start project OOP')
