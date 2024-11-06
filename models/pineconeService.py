@@ -9,6 +9,7 @@ class PineconeService:
     def __init__(self, oaAPI: str, pcAPI: str):
         self.oa = OpenAI(api_key=oaAPI)
         self.pc = Pinecone(api_key=pcAPI)
+        self.indexName = ''
         self.index = None
         self.vectors = None
         self.failedEmbeddings = []
@@ -25,7 +26,8 @@ class PineconeService:
                     region='us-east-1'
                 )
             )
-        self.index = self.pc.Index(name=indexName)
+        self.indexName = indexName
+        self.index = self.pc.Index(name=self.indexName)
 
     def addVectors(self, csvData: list, embModel: str):
         vectors = []
@@ -103,8 +105,12 @@ class PineconeService:
             print('No failed embeddings. Rejecting operation.')
             return
         fullDir = f'inputFiles/{self._generateRandomFileName()}.json'
+        body = {
+            'indexName': self.indexName,
+            'embeddings': self.failedEmbeddings
+        }
         with open(file=fullDir, mode='w') as file:
-            json.dump(self.failedEmbeddings, file)
+            json.dump(body, file)
         
     def _generateRandomFileName():
         chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
