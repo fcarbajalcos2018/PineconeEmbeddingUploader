@@ -112,7 +112,7 @@ class PineconeService:
         with open(file=fullDir, mode='w') as file:
             json.dump(body, file)
         
-    def _generateRandomFileName():
+    def _generateRandomFileName(self):
         chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
         filename = ''
         for i in range(8):
