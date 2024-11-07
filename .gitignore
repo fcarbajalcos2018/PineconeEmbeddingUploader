@@ -1,2 +1,3 @@
 /inputFiles/*
 /.history/*
+/models/__pycache__/*

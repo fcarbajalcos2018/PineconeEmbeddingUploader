@@ -42,7 +42,7 @@ def userWelcome():
         batchSize = int(input('Batch Size: '))
         if batchSize > 1:         
             print('Proceeding to upload...')
-            pc.uploadVectors(vectors=vectors)
+            pc.uploadVectors(vectors=vectors, batchSize=batchSize)
             pc.saveFailedEmbeddings()
             break
         else:
@@ -60,6 +60,8 @@ def __insertOaPc(inFile: InputFiles):
 def _userInputNew():
     inFile = InputFiles()
     oaAPI, pcAPI = __insertOaPc(inFile=inFile)
+    print('OpenAI Key:', oaAPI)
+    print('Pinecone Key:', pcAPI)
     print('Please enter the name of the CSV file containing the Embeddings')
     csvFileName = input('CSV File:')
     inFile.set_csvFilename(csvFileName)
