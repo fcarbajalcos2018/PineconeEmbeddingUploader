@@ -22,6 +22,7 @@ class InputFiles():
         self.emb_filename = filename
     
     def _isOaAPIfilenameSet(self):
+        print(len(self.oaAPI_filename))
         return len(self.oaAPI_filename) > 0
     
     def _isPcAPIfilenameSet(self):
@@ -34,12 +35,12 @@ class InputFiles():
         return len(self.emb_filename) > 0
     
     def get_oaAPI(self):
-        if self._isOaAPIfilenameSet():
+        if not self._isOaAPIfilenameSet():
             return ''
         return self._loadAPI(self.oaAPI_filename)
     
     def get_pcAPI(self):
-        if self._isPcAPIfilenameSet():
+        if not self._isPcAPIfilenameSet():
             return ''
         return self._loadAPI(self.pcAPI_filename)
     
@@ -54,7 +55,7 @@ class InputFiles():
         return api
         
     def get_csv(self):
-        if self._isCSVfilenameSet():
+        if not self._isCSVfilenameSet():
             return None
         fullDirPath = f'inputFiles/{self.csv_filename}.csv'
         data = pd.read_csv(fullDirPath)
@@ -72,7 +73,7 @@ class InputFiles():
         return parsedData
     
     def get_emb(self) -> dict:
-        if self._isEmbFilenameSet():
+        if not self._isEmbFilenameSet():
             return None
         fullDirPath = f'inputFiles/{self.emb_filename}.json'
         content = {}
