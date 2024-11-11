@@ -54,3 +54,16 @@ class MainUI():
         pcFileName = input('Pinecone API Key File: ')
         inFile.set_pcAPIfilename(pcFileName)
         return inFile.get_oaAPI(), inFile.get_pcAPI()
+    
+    def _resumeFromFile(self):
+        inFile = InputFiles()
+        self.oaAPI, self.pcAPI = self.__insertOaPc(inFile=inFile)
+        print('Please enter the name of the JSON file containing the SAVED embeddings')
+        embFileName = input('JSON File: ')
+        inFile.set_embFilename(embFileName)
+        print('Loading file...')
+        self.data = inFile.get_emb()
+        if len(self.oaAPI) == 0 or len(self.pcAPI) == 0 or len(self.data.keys()) == 0:
+            print('Unable to access file contents.')
+            print('The names you entered do not match with existing files in this directory. Please reattempt.')
+            self._resumeFromFile()
