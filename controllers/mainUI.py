@@ -1,4 +1,5 @@
 from ..models.pineconeService import PineconeService
+from ..models.inputFiles import InputFiles
 
 class MainUI():
 
@@ -6,6 +7,7 @@ class MainUI():
         self.isLoaded: bool = None
         self.oaAPI = ''
         self.pcAPI = ''
+        self.data: list | dict = None
         self.pc: PineconeService = None
     
     def welcome(self):
@@ -22,3 +24,24 @@ class MainUI():
         else:
             print('Your selection was INVALID. Please reattempt.')
             self.welcome()
+
+    def loadOrNew(self):
+        if self.isLoaded == True:
+            self._resumeFromFile()
+        else:
+            self._startNewJob()
+    
+    def _startNewJob(self):
+        inFile = InputFiles()
+        self.oaAPI, self.pcAPI = __insertOaPc(inFile=inFile)
+        print('OpenAI Key:', oaAPI)
+        print('Pinecone Key:', pcAPI)
+        print('Please enter the name of the CSV file containing the Embeddings')
+        csvFileName = input('CSV File:')
+        inFile.set_csvFilename(csvFileName)
+        print('Proceeding to access contents of files...')
+        self.data = inFile.get_csv()
+        if len(oaAPI) == 0 or len(pcAPI) == 0 or len(csv) == 0:
+            print('Unable to access file contents.')
+            print('The names you entered do not match with existing files in this directory. Please reattempt.')
+            self._startNewJob()
