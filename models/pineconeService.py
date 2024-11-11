@@ -10,8 +10,8 @@ class PineconeService:
         self.oa = OpenAI(api_key=oaAPI)
         self.pc = Pinecone(api_key=pcAPI)
         self.indexName = ''
-        self.index = None
-        self.vectors = None
+        self.index: pinecone.Index = None
+        self.vectors = []
         self.failedEmbeddings = []
 
     def defineIndex(self, indexName: str):
