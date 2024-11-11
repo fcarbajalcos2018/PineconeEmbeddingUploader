@@ -33,15 +33,24 @@ class MainUI():
     
     def _startNewJob(self):
         inFile = InputFiles()
-        self.oaAPI, self.pcAPI = __insertOaPc(inFile=inFile)
-        print('OpenAI Key:', oaAPI)
-        print('Pinecone Key:', pcAPI)
+        self.oaAPI, self.pcAPI = self.__insertOaPc(inFile=inFile)
+        print('OpenAI Key:', self.oaAPI)
+        print('Pinecone Key:', self.pcAPI)
         print('Please enter the name of the CSV file containing the Embeddings')
         csvFileName = input('CSV File:')
         inFile.set_csvFilename(csvFileName)
         print('Proceeding to access contents of files...')
         self.data = inFile.get_csv()
-        if len(oaAPI) == 0 or len(pcAPI) == 0 or len(csv) == 0:
+        if len(self.oaAPI) == 0 or len(self.pcAPI) == 0 or len(self.csv) == 0:
             print('Unable to access file contents.')
             print('The names you entered do not match with existing files in this directory. Please reattempt.')
             self._startNewJob()
+
+    def __insertOaPc(self, inFile: InputFiles):
+        print('Please enter the name of the file containing the Open AI API Key')
+        oaFileName = input('OpenAI API Key File: ')
+        inFile.set_oaAPIfilename(oaFileName)
+        print('Please enter the name of the file containing the Pinecone API Key')
+        pcFileName = input('Pinecone API Key File: ')
+        inFile.set_pcAPIfilename(pcFileName)
+        return inFile.get_oaAPI(), inFile.get_pcAPI()
