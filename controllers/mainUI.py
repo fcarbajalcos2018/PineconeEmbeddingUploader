@@ -89,3 +89,19 @@ class MainUI():
                 print('INVALID JSON format:', ae)
         else:
             raise Exception('The file contents could not be read')
+    
+    def addVectors(self):
+        if not self.isIndexSelected:
+            print('Index not defined. Terminating operation.')
+            return
+        while True:
+            print('By the number, please select the embedding model as follows:')
+            print('1. text-embedding-3-large')
+            embModel = int(input('Embedding Model: '))
+            if embModel == 1:
+                print('Proceeding to add vectors...')
+                self.vectors = self.pc.addVectors(csvData=self.data, embModel='text-embedding-3-large')
+                break
+            else:
+                print('INVALID field entry. Please reattempt.')
+        print('Vector generation complete.')
