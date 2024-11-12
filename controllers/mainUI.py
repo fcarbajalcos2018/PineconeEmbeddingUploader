@@ -94,14 +94,25 @@ class MainUI():
         if not self.isIndexSelected:
             print('Index not defined. Terminating operation.')
             return
-        while True:
-            print('By the number, please select the embedding model as follows:')
-            print('1. text-embedding-3-large')
-            embModel = int(input('Embedding Model: '))
-            if embModel == 1:
-                print('Proceeding to add vectors...')
-                self.vectors = self.pc.addVectors(csvData=self.data, embModel='text-embedding-3-large')
-                break
-            else:
-                print('INVALID field entry. Please reattempt.')
+        print('By the number, please select the embedding model as follows:')
+        print('1. text-embedding-3-large')
+        embModel = int(input('Embedding Model: '))
+        if embModel == 1:
+            print('Proceeding to add vectors...')
+            self.vectors = self.pc.addVectors(csvData=self.data, embModel='text-embedding-3-large')
+        else:
+            print('INVALID field entry. Please reattempt.')
+            self.addVectors()
+            
         print('Vector generation complete.')
+    
+    def uploadVectors(self):
+        print('Specify a number for the batch size.')
+        batchSize = int(input('Batch Size: '))
+        if batchSize > 1:         
+            print('Proceeding to upload...')
+            self.pc.uploadVectors(vectors=self.vectors, batchSize=batchSize)
+            self.pc.saveFailedEmbeddings()
+        else:
+            print('INVALID entry. Please reattempt.')
+            self.uploadVectors()
