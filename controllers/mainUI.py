@@ -9,6 +9,8 @@ class MainUI():
         self.pcAPI = ''
         self.data: list | dict = None
         self.pc: PineconeService = None
+        self.isIndexSelected = False
+        self.vectorsQueue = []
     
     def welcome(self):
         print('Welcome to the Pinecone Embedding and Vector Uploader!')
@@ -67,3 +69,23 @@ class MainUI():
             print('Unable to access file contents.')
             print('The names you entered do not match with existing files in this directory. Please reattempt.')
             self._resumeFromFile()
+
+    def defineIndexEmbeddings(self):
+        indexName = None
+        print('Contents: ', self.data)
+        if isinstance(self.data, list):
+            print('Please enter a name for an existing or new Index')
+            indexName = input('Index Name: ')
+            self.pc.defineIndex(indexName)
+            self.isIndexSelected = True
+        elif isinstance(self.data, dict):
+            print('Extracting name from save file')
+            try:
+                indexName = self.data['indexName']
+                self.data = self.data['embeddings']
+                self.pc.defineIndex(indexName)
+                self.isIndexSelected = True
+            except AttributeError as ae:
+                print('INVALID JSON format:', ae)
+        else:
+            raise Exception('The file contents could not be read')
