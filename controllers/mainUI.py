@@ -1,5 +1,5 @@
-from ..models.pineconeService import PineconeService
-from ..models.inputFiles import InputFiles
+from models.pineconeService import PineconeService
+from models.inputFiles import InputFiles
 
 class MainUI():
 
@@ -73,6 +73,9 @@ class MainUI():
     def defineIndexEmbeddings(self):
         indexName = None
         print('Contents: ', self.data)
+        if not self.data or len(self.data) == 0:
+            print('No data was retrieved. Terminating operation.')
+            return
         if isinstance(self.data, list):
             print('Please enter a name for an existing or new Index')
             indexName = input('Index Name: ')
@@ -107,6 +110,9 @@ class MainUI():
         print('Vector generation complete.')
     
     def uploadVectors(self):
+        if not self.vectors or len(self.vectors) == 0:
+            print('Vectors not defined. Terminating operation.')
+            return
         print('Specify a number for the batch size.')
         batchSize = int(input('Batch Size: '))
         if batchSize > 1:         
