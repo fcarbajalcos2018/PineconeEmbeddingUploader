@@ -43,7 +43,7 @@ class MainUI():
         inFile.set_csvFilename(csvFileName)
         print('Proceeding to access contents of files...')
         self.data = inFile.get_csv()
-        if len(self.oaAPI) == 0 or len(self.pcAPI) == 0 or len(self.csv) == 0:
+        if len(self.oaAPI) == 0 or len(self.pcAPI) == 0 or len(self.data) == 0:
             print('Unable to access file contents.')
             print('The names you entered do not match with existing files in this directory. Please reattempt.')
             self._startNewJob()
