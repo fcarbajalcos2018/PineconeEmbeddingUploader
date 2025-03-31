@@ -72,6 +72,7 @@ class MainUI():
 
     def defineIndexEmbeddings(self):
         indexName = None
+        self.pc = PineconeService(oaAPI=self.oaAPI, pcAPI=self.pcAPI)
         print('Contents: ', self.data)
         if not self.data or len(self.data) == 0:
             print('No data was retrieved. Terminating operation.')
